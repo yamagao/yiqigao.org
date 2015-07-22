@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<script>
+		$(function() {
+			$( "#accordion" ).accordion();
+			$( "#research" ).selectmenu();
+		});
+	</script>
+	<style>
+    fieldset {
+      border: 0;
+    }
+    select {
+      width: 400px;
+    }
+    .overflow {
+      height: 200px;
+    }
+  </style>
+</head>
+
+<body>
+	<div data-role="page" id="pageone">
+		<div data-role="header">
+			<h1>Javascript Tutorial</h1>
+		</div>
+
+		<div data-role="main" class="ui-content">
+			<div class="ui-grid-a">
+				<div class="ui-block-a">
+					<iframe src="http://docs.google.com/gview?url=http://webdev.ifas.ufl.edu/YIQIGAO/20150508-FF/0508.pptx&embedded=true" style="width:100%; height:900px;" frameborder="0"></iframe>
+				</div>
+
+				<div class="ui-block-b">
+					<div id="accordion">
+						<h3>Quick Example</h3>
+						<div>
+							<button type="button" onclick="document.getElementById('demo1').innerHTML = Date()">Click me to display Date and Time.</button>
+							<p id="demo1"></p>
+						</div>
+						
+						<h3>JavaScript Can Change HTML Content</h3>
+						<div>
+							<p id="demo2">JavaScript can change HTML content.</p>
+							<button type="button" onclick="document.getElementById('demo2').innerHTML = 'Hello JavaScript!'">Click Me!</button>
+						</div>
+						
+						<h3>JavaScript Can Change HTML Attributes</h3>
+						<div>
+							<img id="myImage" onclick="changeImage()" src="pic_bulboff.gif" width="100" height="180">
+							<p>Click the light bulb to turn on/off the light.</p>
+							<script>
+							function changeImage() {
+								var image = document.getElementById('myImage');
+								if (image.src.match("bulbon")) {
+									image.src = "pic_bulboff.gif";
+								} else {
+									image.src = "pic_bulbon.gif";
+								}
+							}
+							</script>
+						</div>
+						
+						<h3>JavaScript Can Change HTML Styles (CSS)</h3>
+						<div>
+							<p id="demo3">JavaScript can change the style of an HTML element.</p>
+							<script>
+							function myFunction() {
+								var x = document.getElementById("demo3");
+								x.style.fontSize = "25px";           
+								x.style.color = "red"; 
+							}
+							</script>
+							<button type="button" onclick="myFunction()">Click Me!</button>
+						</div>
+						
+						<h3>JavaScript Can Validate Data</h3>
+						<div>
+							<p>Please input a number between 1 and 10:</p>
+							<input id="numb" type="number">
+							<button type="button" onclick="myFunction1()">Submit</button>
+							<p id="demo"></p>
+							<script>
+							function myFunction1() {
+								var x, text;
+								// Get the value of the input field with id="numb"
+								x = document.getElementById("numb").value;
+								// If x is Not a Number or less than one or greater than 10
+								if (isNaN(x) || x < 1 || x > 10) {
+									text = "Input not valid";
+								} else {
+									text = "Input OK";
+								}
+								document.getElementById("demo").innerHTML = text;
+							}
+							</script>
+						</div>
+						
+						<h3>Google Calendar</h3>
+						<div>
+							<div id="google-calendar"></div>
+							<script>
+							//var maxResults  = "<t4 type="content" name="Max Results" output="normal" modifiers="striptags, htmlentities, js-var"  />";
+							//var calGroup    = "<t4 type="content" name="Calendar Group" output="normal" modifiers="striptags, htmlentities, js-var, rssentities"  />";
+							//var calendarUrl = "//www.google.com/calendar/feeds/" + calGroup + "/public/basic?orderby=starttime&sortorder=ascending&max-results=" + maxResults + "&futureevents=true&alt=json&callback=?";
+							var calendarUrl = "//www.google.com/calendar/feeds/webteam@ifas.ufl.edu/public/basic?orderby=starttime&sortorder=ascending&max-results=1&futureevents=true&alt=json&callback=?";
+							function buildCalendar(url){
+								var calContent  = "";
+								$.getJSON(url, function (data){
+									var entries = data.feed.entry;
+									$.each(entries, function(i, loc){
+										var title       = loc.title.$t;            
+										var description = loc.content.$t;
+										var date = loc.content.$t;
+										date = date.substring(10, 22);
+										var patt3 = new RegExp("<");
+										var res3 = patt3.exec(date);
+										if(res3 != null){
+										date = date.substring(0, res3.index);}
+										
+										var patt = new RegExp("Description:");
+										var res = patt.exec(description);
+										if(res != null){
+											description = description.substring(res.index + 13);
+											var patt2 = new RegExp("\n");
+											var res2 = patt2.exec(description);
+											description = description.substring(0, res2.index) + "...";  
+										}else{
+											description = "";
+										}
+									  
+										var link        = loc.link[0].href;
+										calContent += "<div class='feedsb'>";
+										calContent += "<h4><strong><a href='" + link + "' target='_blank'>" + date + "</a>";
+										calContent += "<h5>" + title + "</strong></h5>";
+										calContent += "<p>" + description + "</p>";
+									})
+									$(calContent).appendTo("#google-calendar");
+								})
+							};
+							$(document).ready(function(){
+								buildCalendar(calendarUrl);
+							});
+							</script>
+							<a href="http://www.google.com/calendar/feeds/webteam@ifas.ufl.edu/public/basic?orderby=starttime&sortorder=ascending&max-results=1&futureevents=true&alt=json" target="_blank">View JSON file</a>
+						</div>
+						
+						<h3>Give Now (Dropdown)</h3>
+						<div>
+							<h5>Research</h5>
+							<form>
+							<fieldset>
+							<select id="research">
+							  <option selected="selected" value = "0">Please Select</option>
+							  <option value = '<li style=" list-style-type: none;"><h6>View All Citrus Giving &nbsp;&rarr;</h6></li>
+											   <ul>
+											   <li>Charles M. Shinn, Jr. Endowment for Citrus Research</li>
+											   <li>Marjorie G. Riley Citrus Research Endowment</li>
+											   <li>Hunt Bros Endowment for Fellowship in Citrus Research & Education Lake Alfred</li>
+											   <li>C.D. Hughes and Sons Research Endowment</li></ul>'>Citrus</option>
+							  <option value = '<li style=" list-style-type: none;"><h6>View All Insects Giving &nbsp;&rarr;</h6></li>
+											   <ul>
+											   <li>Urban Pest Control Research</li>
+											   <li>Thomas J. and Jane B. Walker Fund</li></ul>'>Insects</option>
+							  <option value = '<li style=" list-style-type: none;"><h6>View All Livestock Giving &nbsp;&rarr;</h6></li>'>&nbsp;&nbsp;----Livestock----</option>		   
+							  <option value = '<ul><li>Florida Cattlemens Endowment</li>
+											   <li>Harriet B. Weeks Bovine Research Fund</li>
+											   <li>Santa Fe River Ranch Center for Studies in Animal Sciences and Wetlands Research Fund</li></ul>'>&nbsp;&nbsp;Beef Cattle</option>
+							  <option value = '<ul><li>Natzke Dairy Science Fund</li>
+											   <li>L. E. "Red" Larson Dairy Endowment</li></ul>'>&nbsp;&nbsp;Dairy Cattle</option>
+							  <option value = '<ul><li>S. M. Wall Fund</li></ul>'>&nbsp;&nbsp;Horses</option>
+							  <option value = '<li style=" list-style-type: none;"><h6>View All Natural Resources Giving &nbsp;&rarr;</h6></li>'>&nbsp;&nbsp;----Natural Resources----</option>				   
+							  <option value = '<ul><li>William Paul Shelley, Sr. Memorial Fund in Forestry</li>
+											   <li>Hugh E. Rhodes Endowment</li></ul>'>&nbsp;&nbsp;Forestry</option>
+							  <option value = '<ul><li>Boston Endowment Fund</li>
+											   <li>UF-WBL Program Enhancement Fund</li></ul>'>&nbsp;&nbsp;Wetlands</option>
+							  <option value = '<ul><li>Oslo Riverfront Conservation Area Environmental Education</li></ul>'>&nbsp;&nbsp;Conservation</option>
+							  <option value = '<ul><li>Joye Giglia Endowment for Innovative Agricultural Technology</li></ul>'>&nbsp;&nbsp;Water</option>		
+							  <option value = '<li style=" list-style-type: none;"><h6>View All Plants Giving &nbsp;&rarr;</h6></li>'>&nbsp;&nbsp;----Plants----</option>				   
+							  <option value = '<ul><li>Florida Chapter ISA Arboriculture Endowment Fund</li></ul>'>&nbsp;&nbsp;Arboculture</option>
+							  <option value = '<ul><li>Florida Nursery, Growers and Landscape Association Endowed Research Fund</li>
+											   <li>National Foliage Foundation Graduate Assistantship</li>
+											   <li>Orlando Garden Club Fellowships in honor of Mary S. Compton and Ann Guthrie</li></ul>'>&nbsp;&nbsp;Environmental Horticulture</option>
+							  <option value = '<ul><li>Florida Mango Forum Endowment</li></ul>'>&nbsp;&nbsp;Fruit</option>
+							  <option value = '<ul><li>Miami-Dade Chapter Florida Nursery, Growers and Landscape Association-TREC Research Endowment</li></ul>'>&nbsp;&nbsp;Horticulture</option>
+							  <option value = '<ul><li>Donald F. May Endowment for Ornamental Research</li></ul>'>&nbsp;&nbsp;Ornamental</option>
+							  <option value = '<ul><li>Calvin L. Korf Turfgrass Research Fund</li></ul>'>&nbsp;&nbsp;Turfgrass</option>
+							  <option value = '<ul><li>Gary Henry Endowment for the Study of Florida Native Wildflowers</li></ul>'>&nbsp;&nbsp;Wildflowers</option>
+							</select>
+							</fieldset>
+							</form>
+							<ul id="research_list"></ul>
+							
+							<script>
+								function dropdownList(selectElement, listElement){
+									var htmlValue = "";
+									if(selectElement.id === "research"){
+										if(selectElement.selectedIndex > 3 && selectElement.selectedIndex < 7){
+											htmlValue += selectElement.getElementsByTagName("option")[3].getAttribute("value");
+										}
+										if(selectElement.selectedIndex > 7 && selectElement.selectedIndex < 12){
+											htmlValue += selectElement.getElementsByTagName("option")[7].getAttribute("value");
+										}
+										if(selectElement.selectedIndex > 12){
+											htmlValue += selectElement.getElementsByTagName("option")[12].getAttribute("value");
+										}
+									}
+									htmlValue += selectElement.getElementsByTagName("option")[selectElement.selectedIndex].getAttribute("value");
+									if(htmlValue === "0"){
+										listElement.innerHTML = "";
+										return;
+									}
+									var selectArray = document.getElementsByTagName("select");
+									for (i = 0; i < selectArray.length; i++) {
+										if(selectArray[i] === selectElement)
+											continue;
+										selectArray[i].selectedIndex = 0;
+										//alert(selectArray[i].parentNode.nextElementSibling.tagName);
+										selectArray[i].parentNode.nextElementSibling.innerHTML = "";
+									}
+									//listElement.innerHTML = "";  	
+									listElement.innerHTML = htmlValue;
+								}
+								
+								$( "#research" ).selectmenu({
+								  change: function( event, ui ) {
+										dropdownList(document.getElementById("research"), document.getElementById("research_list"));}
+								});
+							</script>
+						</div>
+						
+						<h3>Give Now (Search)</h3>
+						<div>
+							<h5>Search Funds</h5>
+							<form id="search_funds" action="#">
+							<input type="text" id="funds">
+							</form>
+							<ul id="funds_list"></ul>
+							
+							<script>
+								$( "#funds" ).keyup(function() {
+									if($(this).val() === ""){
+										document.getElementById("funds_list").innerHTML = "";
+										return;
+									}
+									var fundsArray = document.getElementsByTagName("option");
+									var htmlValue = "";
+									var tempArray;
+									for (i = 0; i < fundsArray.length; i++) { 
+										if(fundsArray[i].getAttribute("value") === "0"){
+											continue;
+										}
+										//if(fundsArray[i].textContent.toLowerCase().indexOf($('#funds').val().toLowerCase()) !== -1){
+										if(fundsArray[i].value.toLowerCase().indexOf($('#funds').val().toLowerCase()) !== -1){
+											if(fundsArray[i].value.indexOf('</li>') !== -1){
+												tempArray = fundsArray[i].value.split('</li>');
+												for(j = 0; j < tempArray.length; j++) { 
+													if(tempArray[j].toLowerCase().indexOf($('#funds').val().toLowerCase()) !== -1){
+														var content2add = tempArray[j].replace("<li>", "<li style='list-style-type: none;'>");  
+														htmlValue += content2add.replace("<ul>", "");
+													}
+												}
+											}
+											else{
+												htmlValue += fundsArray[i].getAttribute("value");
+											}
+										}
+									}
+									document.getElementById("funds_list").innerHTML = htmlValue;
+								});
+							</script>
+						</div>
+					</div>	 
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html> 
